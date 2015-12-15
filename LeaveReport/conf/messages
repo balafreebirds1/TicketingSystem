@@ -1,0 +1,12 @@
+# You can specialize this file for each language.
+# For example, for French create a messages.fr file
+#
+
+customer = Customer
+ticketStatus  = Ticket Status
+moduleName = Module Name
+assignedTo = Assigned To
+createdBy = Created By
+title =  Title
+comment = Comment
+

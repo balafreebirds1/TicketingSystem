@@ -1,0 +1,221 @@
+#{extends 'Common/header.html' /}
+
+            <!-- page content -->
+            <div class="right_col" role="main">
+            
+
+
+
+<ul class="nav nav-tabs" role="tablist"> 
+<li role="presentation" id="1">
+<a href="/Tickets/index?id=1">Tickets</a></li> <!-- 
+<li id="2" role="presentation"><a href="/Tickets/index?id=2">Edit Ticket</a></li> 
+<li id="3" role="presentation"><a href="/Tickets/index?id=3">Priority</a></li> 
+ -->
+
+ </ul>
+ <div>
+
+                            <button type="button" class="btn btn-primary" style="float:right" id="newRecord" onClick="javascript:location.href = '/admin/logtickets/new'">Add New Ticket</button>
+      </div>                          
+                                <div style="background-color: white; padding:18px; margin-top:23px">
+                                
+                                <table  id="example" class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Customer</th>
+                                                <th>Status</th>
+                                                <th>Title</th>
+                                                <th>Assigned User</th>
+                                                <th>Edit</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                            
+                                          
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Customer</th>
+                                                <th>Status</th>
+                                                <th>Title</th>
+                                                <th>Assigned User</th>
+                                                <th>Edit</th>
+                                                
+                                                                                             
+                                               
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div><!-- /.box-body -->
+                                
+                                
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                </div>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                    <div id="custom_notifications" class="custom-notifications dsp_none">
+            <ul class="list-unstyled notifications clearfix" data-tabbed_notifications="notif-group">
+            </ul>
+            <div class="clearfix"></div>
+            <div id="notif-group" class="tabbed_notifications"></div>
+        </div>
+
+
+<script>
+
+
+var asInitVals = new Array();
+
+
+var moduleId = ${moduleId.raw()};
+
+
+
+if(moduleId=='1')
+	$("#1").addClass("active");
+else if(moduleId=='2')
+	$("#2").addClass("active");
+else if(moduleId=='3')
+	$("#3").addClass("active");
+
+
+
+
+var oTable = $('#example').dataTable({
+    "oLanguage": {
+        "sSearch": "Search all columns:"
+    },
+    "aoColumnDefs": [
+        {
+            'bSortable': false,
+            'aTargets': [0]
+        } //disables sorting for column one
+],
+"aoColumns": [                         
+	            { "mData": "Id" },
+	            { "mData": "Customer" },
+	            { "mData": "Status" },
+	            { "mData": "Title" },
+	            { "mData": "Assigned_User" },	
+	            {"mDataProp": "Edit",
+                  "sDefaultContent":"<a class='edit' href='#'>Edit</a>"
+                 }  
+	           
+	        ],
+    'iDisplayLength': 12,
+    "sPaginationType": "full_numbers"
+    
+    });
+
+
+var deleteString="<img  src='/public/images/delete.png' />";		
+var editString ="<a class='edit' style='color: #CC285E;text-decoration: underline;' href='#'>Edit</a>";
+
+var callMethod = function(href, options) {
+		
+		if (options == null)
+			return href;
+		
+		var parameters = "";
+		for (key in options) {
+			var option = options[key];
+			
+			if (option instanceof Array) {
+				for (var i = 0; i < option.length; i++) {
+					if (parameters != "")
+						parameters += "&" + key + "=" + escape(option[i]);
+					else
+						parameters = key + "=" + escape(option[i]);
+				}
+			} else if (option instanceof Object) {
+				for (field in option) {
+					if (parameters != "")
+						parameters += "&" + key + "." + field + "=" + escape(option[field]);
+					else
+						parameters = key + "." + field + "=" + escape(option[field]);
+				}
+			} else if (parameters != "")
+				parameters += "&" + key + "=" + escape(option);
+			else
+				parameters = key + "=" + escape(option);
+		}
+		
+		if (parameters != "") {
+			if (href.indexOf("?") != -1)
+				return href + "&" + parameters;
+			else
+				return href + "?" + parameters;
+		} else
+			return href;
+	}
+var parameters = {};
+var url = "@{Tickets.loadDetails()}";
+//change url depending on which one
+$.ajax({ url : callMethod(url, parameters), 
+	dataType: 'json',
+	async: true,
+	success: function(array) {
+		
+	
+		
+		for (var i = 0; i < array.length; i++) {
+	           var editString ="";
+	           
+	           if(array[i].status==="Closed"){
+	        	   
+	           }else{
+	           
+				 editString ="<a class='edit' href='/admin/logtickets/"+array[i].id+"'>Edit</a>";
+	           }
+			
+				 
+
+				 oTable.fnAddData( [
+				 {"Id" : array[i].id,"Customer" : array[i].customer,"Status": array[i].status, "Title":array[i].title, "Assigned_User":array[i].assigned,
+				 	 "Edit":editString}
+				 
+			 
+			                                      	                       					      ] );
+       	  	
+		
+		}
+	  }
+});
+
+
+
+ 	
+
+</script>
+
+</body>
+
+</html>
